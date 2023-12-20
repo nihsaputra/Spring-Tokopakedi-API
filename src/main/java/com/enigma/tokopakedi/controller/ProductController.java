@@ -31,7 +31,7 @@ public class ProductController {
     }
 
     @GetMapping(path = "/products/id")
-    public Product findProductId(@RequestBody Product request){
+    public Product getProductIdRequest(@RequestBody Product request){
 
         Product productId = productRepository.findById(request.getId()).orElse(null);
 
@@ -39,8 +39,17 @@ public class ProductController {
 
     }
 
+    @GetMapping(path = "/products/{requestId}")
+    public Product getProductIdPath(@PathVariable String requestId){
+
+        Product product = productRepository.findById(requestId).orElse(null);
+
+        return product;
+
+    }
+
     @DeleteMapping(path = "/products")
-    public String deleteProductId(@RequestBody Product request){
+    public String deleteProductRequest(@RequestBody Product request){
 
         Product productId = productRepository.findById(request.getId()).orElse(null);
 
@@ -50,8 +59,17 @@ public class ProductController {
 
     }
 
-    @PutMapping(path = "products")
-    public Product updateProductId(@RequestBody Product request){
+    @DeleteMapping(path = "/products/{requestId}")
+    public String deleteProductPath(@PathVariable String requestId){
+
+        productRepository.deleteById(requestId);
+
+        return "Delete Success";
+
+    }
+
+    @PutMapping(path = "products/id")
+    public Product updateProductRequest(@RequestBody Product request){
 
         Product product = productRepository.findById(request.getId())
                 .orElse(null);
@@ -63,5 +81,21 @@ public class ProductController {
         productRepository.save(product);
 
         return product;
+    }
+
+    @PutMapping(path = "products/{requestId}")
+    public Product updateProductPath(@PathVariable String requestId){
+
+        Product request = productRepository.findById(requestId).orElse(null);
+
+        Product product= new Product();
+        product.setId(requestId);
+        product.setName(request.getName());
+        product.setPrice(request.getPrice());
+        product.setStock(request.getStock());
+
+        Product updateProduct = productRepository.save(product);
+
+        return updateProduct;
     }
 }
