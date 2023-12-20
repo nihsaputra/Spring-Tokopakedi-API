@@ -1,4 +1,4 @@
-package com.enigma.tokopakedi;
+package com.enigma.tokopakedi.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
