@@ -2,20 +2,21 @@ package com.enigma.tokopakedi.controller;
 
 import com.enigma.tokopakedi.entity.Customer;
 import com.enigma.tokopakedi.repository.CustomerRepository;
+import com.enigma.tokopakedi.service.CustomerService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
 public class CustomerController {
 
     private final CustomerRepository customerRepository;
+    private final CustomerService customerService;
 
-    public CustomerController(CustomerRepository customerRepository) {
+    public CustomerController(CustomerRepository customerRepository, CustomerService customerService) {
         this.customerRepository = customerRepository;
+        this.customerService = customerService;
     }
 
     @PostMapping(path = "/customers")
@@ -34,36 +35,36 @@ public class CustomerController {
         return customers;
     }
 
-    @GetMapping(path = "/customers/id")
-    public Customer findCustomerById(@RequestBody Customer customerId){
+    @GetMapping(path = "/customers/{requestId}")
+    public Customer findCustomerById(@PathVariable String requestId){
 
-        Customer customer = customerRepository.findById(customerId.getId())
-                .orElse(null);
+        Optional<Customer> optionalCustomer = customerRepository.findById(requestId);
 
-        return customer;
-    }
+        if (optionalCustomer.isPresent()) return optionalCustomer.get();
 
-    @DeleteMapping(path = "/customers")
-    public String deleteById(@RequestBody Customer request){
-
-        customerRepository.deleteById(request.getId());
-
-        return "Delete Success";
+        throw new RuntimeException("customer not found");
     }
 
     @PutMapping(path = "/customers")
     public Customer updateCustomer(@RequestBody Customer request){
 
-        Customer customer = customerRepository.findById(request.getId()).orElse(null);
+        Optional<Customer> optionalCustomer = customerRepository.findById(request.getId());
 
-        customer.setName(request.getName());
-        customer.setAddress(request.getAddress());
-        customer.setPhoneNumber(request.getPhoneNumber());
+        if (optionalCustomer.isEmpty()) {
+            throw new RuntimeException("customer not found");
+        }
 
-        customerRepository.save(customer);
+        Customer updateCustomer = customerRepository.save(request);
 
-        return customer;
+        return updateCustomer;
     }
 
+    @DeleteMapping(path = "/customers/{id}")
+    public String deleteCustomer(@PathVariable String id){
+
+        customerService.deleteById(id);
+
+        return "OK";
+    }
 
 }

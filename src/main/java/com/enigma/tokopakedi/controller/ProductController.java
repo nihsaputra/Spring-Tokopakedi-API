@@ -5,6 +5,7 @@ import com.enigma.tokopakedi.repository.ProductRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class ProductController {
@@ -30,15 +31,6 @@ public class ProductController {
         return allProduct;
     }
 
-    @GetMapping(path = "/products/id")
-    public Product getProductIdRequest(@RequestBody Product request){
-
-        Product productId = productRepository.findById(request.getId()).orElse(null);
-
-        return productId;
-
-    }
-
     @GetMapping(path = "/products/{requestId}")
     public Product getProductIdPath(@PathVariable String requestId){
 
@@ -48,54 +40,37 @@ public class ProductController {
 
     }
 
-    @DeleteMapping(path = "/products")
-    public String deleteProductRequest(@RequestBody Product request){
-
-        Product productId = productRepository.findById(request.getId()).orElse(null);
-
-        productRepository.deleteById(productId.getId());
-
-        return "Delete Success";
-
-    }
 
     @DeleteMapping(path = "/products/{requestId}")
     public String deleteProductPath(@PathVariable String requestId){
 
-        productRepository.deleteById(requestId);
+        // Mencari apakah ada id nya
+        Optional<Product> optionalProduct = productRepository.findById(requestId);
 
-        return "Delete Success";
+        // Pengecekan jika id nya tidak ada maka akan throw
+        if (optionalProduct.isEmpty()) throw new RuntimeException("Product not found");
+
+        // Menghapus berdasarkan id, jika tidak terkena throw
+        Product product = optionalProduct.get();
+        productRepository.delete(product);
+
+        return "OK";
 
     }
 
-    @PutMapping(path = "products/id")
+    @PutMapping(path = "products")
     public Product updateProductRequest(@RequestBody Product request){
 
-        Product product = productRepository.findById(request.getId())
-                .orElse(null);
+        // Mencari apakah ada id nya
+        Optional<Product> optionalProduct = productRepository.findById(request.getId());
 
-        product.setName(request.getName());
-        product.setStock(request.getStock());
-        product.setPrice(request.getPrice());
+        // Mengecek jika id nya tidak ada maka akan throw
+        if (optionalProduct.isEmpty()) throw new RuntimeException("Product not found");
 
-        productRepository.save(product);
-
-        return product;
-    }
-
-    @PutMapping(path = "products/{requestId}")
-    public Product updateProductPath(@PathVariable String requestId){
-
-        Product request = productRepository.findById(requestId).orElse(null);
-
-        Product product= new Product();
-        product.setId(requestId);
-        product.setName(request.getName());
-        product.setPrice(request.getPrice());
-        product.setStock(request.getStock());
-
-        Product updateProduct = productRepository.save(product);
+        // Mengupdate berdasarkan id, jika tidak terkena throw
+        Product updateProduct = productRepository.save(request);
 
         return updateProduct;
     }
+
 }
