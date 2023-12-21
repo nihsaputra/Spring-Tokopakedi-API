@@ -3,6 +3,9 @@ package com.enigma.tokopakedi.controller;
 import com.enigma.tokopakedi.entity.Customer;
 import com.enigma.tokopakedi.repository.CustomerRepository;
 import com.enigma.tokopakedi.service.CustomerService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,51 +23,41 @@ public class CustomerController {
     }
 
     @PostMapping(path = "/customers")
-    public Customer createNewCustomer(@RequestBody Customer request){
-
-        Customer newCustomer = customerRepository.save(request);
-
-        return newCustomer;
+    public Customer createNewCustomer(@RequestBody Customer requestCustomer){
+        return customerService.createNew(requestCustomer);
     }
 
     @GetMapping(path = "/customers")
     public List<Customer> findAllCustomers(){
-
-        List<Customer> customers = customerRepository.findAll();
-
-        return customers;
+        return customerService.findAll();
     }
 
     @GetMapping(path = "/customers/{requestId}")
     public Customer findCustomerById(@PathVariable String requestId){
-
-        Optional<Customer> optionalCustomer = customerRepository.findById(requestId);
-
-        if (optionalCustomer.isPresent()) return optionalCustomer.get();
-
-        throw new RuntimeException("customer not found");
+        return customerService.findById(requestId);
     }
 
     @PutMapping(path = "/customers")
-    public Customer updateCustomer(@RequestBody Customer request){
-
-        Optional<Customer> optionalCustomer = customerRepository.findById(request.getId());
-
-        if (optionalCustomer.isEmpty()) {
-            throw new RuntimeException("customer not found");
-        }
-
-        Customer updateCustomer = customerRepository.save(request);
-
-        return updateCustomer;
+    public Customer updateCustomer(@RequestBody Customer requestCustomer){
+        return customerService.updateById(requestCustomer);
     }
 
-    @DeleteMapping(path = "/customers/{id}")
-    public String deleteCustomer(@PathVariable String id){
+    @DeleteMapping(path = "/customers/{requestId}")
+    public String deleteCustomer(@PathVariable String requestId){
 
-        customerService.deleteById(id);
+        customerService.deleteById(requestId);
 
         return "OK";
+    }
+
+    @GetMapping(path = "/customers/{page}/{size}")
+    public List<Customer> findAllPageAndSize(@PathVariable("page") int page,@PathVariable("size") int size){
+        return customerService.findAllPageAndSize(page, size);
+    }
+
+    @GetMapping(path = "/customers2")
+    public List<Customer> findByNameOrPhone(@RequestParam String search){
+        return customerService.searchCustomerByNameOrPhone(search);
     }
 
 }

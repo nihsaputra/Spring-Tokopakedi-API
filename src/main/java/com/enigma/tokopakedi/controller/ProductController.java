@@ -2,6 +2,11 @@ package com.enigma.tokopakedi.controller;
 
 import com.enigma.tokopakedi.entity.Product;
 import com.enigma.tokopakedi.repository.ProductRepository;
+import com.enigma.tokopakedi.service.ProductService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,67 +15,51 @@ import java.util.Optional;
 @RestController
 public class ProductController {
     private final ProductRepository productRepository;
+    private final ProductService productService;
 
-    public ProductController(ProductRepository productRepository) {
+    public ProductController(ProductRepository productRepository, ProductService productService) {
         this.productRepository = productRepository;
+        this.productService = productService;
     }
 
     @PostMapping(path = "/products")
-    public Product createNewProduct(@RequestBody Product request){
-
-        Product newProduct = productRepository.save(request);
-
-        return newProduct;
+    public Product createNewProduct(@RequestBody Product requestProduct){
+        return productService.createNew(requestProduct);
     }
 
     @GetMapping(path = "/products")
     public List<Product> findAllProducts(){
-
-        List<Product> allProduct = productRepository.findAll();
-
-        return allProduct;
+        return productService.findAll();
     }
 
     @GetMapping(path = "/products/{requestId}")
     public Product getProductIdPath(@PathVariable String requestId){
-
-        Product product = productRepository.findById(requestId).orElse(null);
-
-        return product;
-
+        return productService.findById(requestId);
     }
 
 
     @DeleteMapping(path = "/products/{requestId}")
     public String deleteProductPath(@PathVariable String requestId){
-
-        // Mencari apakah ada id nya
-        Optional<Product> optionalProduct = productRepository.findById(requestId);
-
-        // Pengecekan jika id nya tidak ada maka akan throw
-        if (optionalProduct.isEmpty()) throw new RuntimeException("Product not found");
-
-        // Menghapus berdasarkan id, jika tidak terkena throw
-        Product product = optionalProduct.get();
-        productRepository.delete(product);
-
-        return "OK";
-
+        return productService.deleteById(requestId);
     }
 
     @PutMapping(path = "products")
-    public Product updateProductRequest(@RequestBody Product request){
-
-        // Mencari apakah ada id nya
-        Optional<Product> optionalProduct = productRepository.findById(request.getId());
-
-        // Mengecek jika id nya tidak ada maka akan throw
-        if (optionalProduct.isEmpty()) throw new RuntimeException("Product not found");
-
-        // Mengupdate berdasarkan id, jika tidak terkena throw
-        Product updateProduct = productRepository.save(request);
-
-        return updateProduct;
+    public Product updateProductRequest(@RequestBody Product requestProduct){
+            return productService.updateById(requestProduct);
     }
 
+    @GetMapping(path = "/products/{page}/{size}")
+    public List<Product> findALlPageAndSize(@PathVariable("page") int page, @PathVariable("size") int size){
+        Pageable pageable= PageRequest.of(page,size);
+
+        Page<Product> findAllPageAndSize = productRepository.findAll(pageable);
+
+        return findAllPageAndSize.getContent();
+    }
+
+    @GetMapping(path = "/products2")
+    public List<Product> findByNameOrMaxMinPrice(@RequestParam String search){
+        String temp= "%" + search + "%";
+        return productRepository.findByNameorMinMaxPrice(temp);
+    }
 }
