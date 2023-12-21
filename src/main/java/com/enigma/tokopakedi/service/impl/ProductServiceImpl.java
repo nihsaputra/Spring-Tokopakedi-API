@@ -74,5 +74,13 @@ public class ProductServiceImpl implements ProductService {
         return updateProduct;
     }
 
+    @Override
+    public List<Product> findByNameOrMaxMinPrice(String name, Integer minPrice, Integer maxPrice) {
+
+        String tempName= "%" + name + "%";
+
+        return productRepository.findByNameorMinMaxPrice(tempName, minPrice, maxPrice);
+    }
+
 
 }

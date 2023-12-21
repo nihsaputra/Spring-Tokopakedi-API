@@ -15,4 +15,6 @@ public interface ProductService {
     String deleteById(String requestId);
 
     Product updateById(Product requestProduct);
+
+    List<Product> findByNameOrMaxMinPrice(String name, Integer minPrice, Integer maxPrice);
 }

@@ -11,6 +11,10 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product,String> {
 
-    @Query(value = "select p from Product p where p.name like :search ")
-    List<Product> findByNameorMinMaxPrice(@Param("search") String search);
+    @Query(value = "select p from Product p where p.name like :name " +
+                        "and p.price >= :minPrice " +
+                             "and p.price <= :maxPrice")
+    List<Product> findByNameorMinMaxPrice(@Param("name") String name,
+                                            @Param("minPrice") Integer minPrice,
+                                                @Param("maxPrice") Integer maxPrice);
 }

@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, String> {
 
-    @Query(value = "select c from Customer c where c.name like :search or c.phoneNumber like : search" )
+    @Query(value = "select c from Customer c where c.name like :search or c.phoneNumber like :search" )
     List<Customer> searchCustomerByNameOrPhone(@Param("search") String search);
 }

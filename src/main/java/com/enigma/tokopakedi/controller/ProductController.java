@@ -27,10 +27,10 @@ public class ProductController {
         return productService.createNew(requestProduct);
     }
 
-    @GetMapping(path = "/products")
-    public List<Product> findAllProducts(){
-        return productService.findAll();
-    }
+//    @GetMapping(path = "/products")
+//    public List<Product> findAllProducts(){
+//        return productService.findAll();
+//    }
 
     @GetMapping(path = "/products/{requestId}")
     public Product getProductIdPath(@PathVariable String requestId){
@@ -57,9 +57,12 @@ public class ProductController {
         return findAllPageAndSize.getContent();
     }
 
-    @GetMapping(path = "/products2")
-    public List<Product> findByNameOrMaxMinPrice(@RequestParam String search){
-        String temp= "%" + search + "%";
-        return productRepository.findByNameorMinMaxPrice(temp);
+    // localhost:8081/products?name=&minPrice=0&maxPrice=1000000
+    @GetMapping(path = "/products")
+    public List<Product> findByNameOrMaxMinPrice(@RequestParam String name,
+                                                    @RequestParam(name = "minPrice", defaultValue = "0") Integer minPrice,
+                                                        @RequestParam(name = "maxPrice", defaultValue = "1000000") Integer maxPrice){
+
+        return productService.findByNameOrMaxMinPrice(name, minPrice, maxPrice);
     }
 }

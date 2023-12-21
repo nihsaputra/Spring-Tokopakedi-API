@@ -27,10 +27,10 @@ public class CustomerController {
         return customerService.createNew(requestCustomer);
     }
 
-    @GetMapping(path = "/customers")
-    public List<Customer> findAllCustomers(){
-        return customerService.findAll();
-    }
+//    @GetMapping(path = "/customers")
+//    public List<Customer> findAllCustomers(){
+//        return customerService.findAll();
+//    }
 
     @GetMapping(path = "/customers/{requestId}")
     public Customer findCustomerById(@PathVariable String requestId){
@@ -55,7 +55,7 @@ public class CustomerController {
         return customerService.findAllPageAndSize(page, size);
     }
 
-    @GetMapping(path = "/customers2")
+    @GetMapping(path = "/customers")
     public List<Customer> findByNameOrPhone(@RequestParam String search){
         return customerService.searchCustomerByNameOrPhone(search);
     }
