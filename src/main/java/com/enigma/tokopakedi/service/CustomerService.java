@@ -1,6 +1,7 @@
 package com.enigma.tokopakedi.service;
 
 import com.enigma.tokopakedi.entity.Customer;
+import com.enigma.tokopakedi.model.SearchCustomerRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -9,9 +10,11 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface CustomerService {
-    Customer createNew(Customer requestCustomer);
+    Customer createNew(Customer customer);
 
-    List<Customer> findAll();
+    List<Customer> createBulk(List<Customer> customers);
+
+    Page<Customer> findAll(SearchCustomerRequest request);
 
     Customer findById(String requestId);
 
@@ -19,7 +22,4 @@ public interface CustomerService {
 
     void deleteById(String requestId);
 
-    List<Customer> findAllPageAndSize(int page,int size);
-
-    List<Customer> searchCustomerByNameOrPhone(String search);
 }
