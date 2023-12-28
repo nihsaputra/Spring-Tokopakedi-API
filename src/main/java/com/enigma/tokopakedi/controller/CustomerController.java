@@ -30,15 +30,12 @@ public class CustomerController {
 
     @PostMapping(path = "/customers")
     public ResponseEntity<WebResponse<Customer>> createNewCustomer(@RequestBody Customer customer){
-
         Customer createCustomer = customerService.createNew(customer);
-
         WebResponse<Customer> response = WebResponse.<Customer>builder()
                 .status(HttpStatus.CREATED.getReasonPhrase())
                 .message("create new customer successfuly")
                 .data(createCustomer)
                 .build();
-
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
