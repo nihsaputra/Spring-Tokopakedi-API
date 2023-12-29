@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class ProductController {
         this.productService = productService;
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN')")
     @PostMapping(path = "/products")
     public ResponseEntity<WebResponse<Product>> createNewProduct(@RequestBody Product requestProduct){
 
@@ -41,6 +43,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN')")
     @PostMapping(path = "/products/bulk")
     public ResponseEntity<WebResponse<List<Product>>> createNewProductBulk(@RequestBody List<Product> products){
 
@@ -55,6 +58,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN')")
     @GetMapping(path = "/products/{requestId}")
     public ResponseEntity<WebResponse<Product>> findProductId(@PathVariable String requestId){
 
@@ -69,6 +73,7 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN')")
     @GetMapping(path = "/products")
     public ResponseEntity<WebResponse<List<Product>>> findProducts(
             @RequestParam(defaultValue = "1") Integer page,
@@ -104,6 +109,7 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN')")
     @PutMapping(path = "products")
     public ResponseEntity<WebResponse<Product>> updateProduct(@RequestBody Product requestProduct){
 
@@ -118,6 +124,7 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN')")
     @DeleteMapping(path = "/products/{requestId}")
     public ResponseEntity<WebResponse<String>> deleteProduct(@PathVariable String requestId){
 

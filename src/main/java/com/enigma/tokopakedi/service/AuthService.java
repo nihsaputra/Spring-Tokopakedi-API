@@ -7,4 +7,6 @@ import com.enigma.tokopakedi.model.UserResponse;
 public interface AuthService {
     UserResponse register(AuthRequest request);
     UserResponse registerAdmin(AuthRequest request);
+
+    String login(AuthRequest request);
 }

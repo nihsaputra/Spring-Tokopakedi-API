@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN')")
     @PostMapping
     public ResponseEntity<?> createNewTransaction(@RequestBody OrderRequest request){
         OrderResponse order = orderService.createTransaction(request);
@@ -31,6 +33,7 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN')")
     @GetMapping
     public ResponseEntity<?> findAll(@RequestParam(defaultValue = "1", required = false) Integer page,
                                       @RequestParam(defaultValue = "10", required = false) Integer size){
@@ -68,6 +71,7 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN')")
     @GetMapping(path = "/{id}")
     public ResponseEntity<?> findById(@PathVariable(name = "id") String id){
         OrderResponse findById = orderService.findById(id);

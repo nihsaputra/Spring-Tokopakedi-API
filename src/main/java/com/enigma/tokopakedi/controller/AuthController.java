@@ -41,8 +41,15 @@ public class AuthController {
     }
 
     @PostMapping(path = "/login")
-    public ResponseEntity<?> login(){
-        return null;
+    public ResponseEntity<?> login(@RequestBody AuthRequest request){
+        String token = authService.login(request);
+        WebResponse<String> response = WebResponse.<String>builder()
+                .status(HttpStatus.OK.getReasonPhrase())
+                .message("successfuly login")
+                .data(token)
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 }
 
