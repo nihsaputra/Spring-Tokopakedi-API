@@ -39,6 +39,7 @@ public class JwtUtil {
                     .withExpiresAt(Instant.now().plusSeconds(expirationInSecond))
                     .withClaim("roles", roles)
                     .sign(algorithm);
+
         }catch (JWTCreationException e){
             throw new RuntimeException(e);
         }

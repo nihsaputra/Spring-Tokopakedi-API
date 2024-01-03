@@ -63,8 +63,6 @@ public class AuthServiceImpl implements AuthService {
     public UserResponse register(AuthRequest request) {
         validationUtil.validate(request);
 
-        Optional<UserCredential> optionalUserCredential = userCredentialRepository.findByEmail(request.getEmail());
-
         Role roleCustomer = roleService.getOrSave(ERole.ROLE_CUSTOMER);
         String hashPassword = passwordEncoder.encode(request.getPassword());
 
@@ -95,8 +93,6 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public UserResponse registerAdmin(AuthRequest request) {
         validationUtil.validate(request);
-
-        Optional<UserCredential> optionalUserCredential = userCredentialRepository.findByEmail(request.getEmail());
 
         Role roleCustomer = roleService.getOrSave(ERole.ROLE_CUSTOMER);
         Role roleAdmin = roleService.getOrSave(ERole.ROLE_SUPER_ADMIN);

@@ -1,6 +1,7 @@
 package com.enigma.tokopakedi.service;
 
 import com.enigma.tokopakedi.entity.Customer;
+import com.enigma.tokopakedi.model.CustomerResponse;
 import com.enigma.tokopakedi.model.SearchCustomerRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,9 +11,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface CustomerService {
-    Customer createNew(Customer customer);
-
-    List<Customer> createBulk(List<Customer> customers);
+    void createNew(Customer customer);
 
     Page<Customer> findAll(SearchCustomerRequest request);
 

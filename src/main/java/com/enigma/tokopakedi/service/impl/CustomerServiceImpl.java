@@ -2,6 +2,7 @@ package com.enigma.tokopakedi.service.impl;
 
 import com.enigma.tokopakedi.entity.Customer;
 import com.enigma.tokopakedi.entity.UserCredential;
+import com.enigma.tokopakedi.model.CustomerResponse;
 import com.enigma.tokopakedi.model.SearchCustomerRequest;
 import com.enigma.tokopakedi.repository.CustomerRepository;
 import com.enigma.tokopakedi.service.CustomerService;
@@ -34,16 +35,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Customer createNew(Customer customer) {
-        Customer newCustomer = customerRepository.save(customer);
-        return newCustomer;
-    }
-
-    @Override
-    public List<Customer> createBulk(List<Customer> customers) {
-        List<Customer> createBulkCustomer = customerRepository.saveAll(customers);
-
-        return createBulkCustomer;
+    public void createNew(Customer customer) {
+        customerRepository.save(customer);
     }
 
     @Override
@@ -68,9 +61,21 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer findById(String requestId) {
+
         Optional<Customer> optionalCustomer = customerRepository.findById(requestId);
-        if (optionalCustomer.isPresent()) return optionalCustomer.get();
-        throw new RuntimeException("customer not found");
+
+        if (optionalCustomer.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND,"not found");
+
+        // user yang saat ini login membawa token
+        UserCredential currenUserCredential = (UserCredential) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserCredential credential = optionalCustomer.get().getUserCredential();
+        if (!currenUserCredential.getId().equals(credential.getId())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"forbidden");
+        }
+
+
+
+        return optionalCustomer.get();
     }
 
     @Transactional(rollbackFor = Exception.class)

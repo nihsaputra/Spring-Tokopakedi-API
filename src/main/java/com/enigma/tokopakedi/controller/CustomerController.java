@@ -6,11 +6,13 @@ import com.enigma.tokopakedi.model.SearchCustomerRequest;
 import com.enigma.tokopakedi.model.WebResponse;
 import com.enigma.tokopakedi.repository.CustomerRepository;
 import com.enigma.tokopakedi.service.CustomerService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -18,42 +20,13 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequiredArgsConstructor
+@RequestMapping(path = "/customers")
 public class CustomerController {
 
-    private final CustomerRepository customerRepository;
     private final CustomerService customerService;
 
-    public CustomerController(CustomerRepository customerRepository, CustomerService customerService) {
-        this.customerRepository = customerRepository;
-        this.customerService = customerService;
-    }
-
-//    @PostMapping(path = "/customers")
-//    public ResponseEntity<WebResponse<Customer>> createNewCustomer(@RequestBody Customer customer){
-//        Customer createCustomer = customerService.createNew(customer);
-//        WebResponse<Customer> response = WebResponse.<Customer>builder()
-//                .status(HttpStatus.CREATED.getReasonPhrase())
-//                .message("create new customer successfuly")
-//                .data(createCustomer)
-//                .build();
-//        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-//    }
-
-    @PostMapping(path = "/customers/bulk")
-    public ResponseEntity<WebResponse<List<Customer>>> createBulkCustomers(@RequestBody List<Customer> customers){
-
-        List<Customer> createCustomer = customerService.createBulk(customers);
-
-        WebResponse<List<Customer>> response = WebResponse.<List<Customer>>builder()
-                .status(HttpStatus.CREATED.getReasonPhrase())
-                .message("successfuly create bulk customers")
-                .data(createCustomer)
-                .build();
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    @GetMapping(path = "/customers/{requestId}")
+    @GetMapping(path = "/{requestId}")
     public ResponseEntity<WebResponse<Customer>> findCustomerById(@PathVariable String requestId){
 
         Customer findCustomerById = customerService.findById(requestId);
@@ -67,7 +40,8 @@ public class CustomerController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping(path = "/customers")
+    @PreAuthorize("hasAnyAuthority('SUPER_ADMIN','ADMIN')")
+    @GetMapping
     public ResponseEntity<WebResponse<List<Customer>>> findAllCustomers(
                                            @RequestParam(defaultValue = "1") Integer page,
                                            @RequestParam(defaultValue = "10") Integer size,
@@ -100,7 +74,7 @@ public class CustomerController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping(path = "/customers")
+    @PutMapping
     public ResponseEntity<WebResponse<Customer>> updateCustomer(@RequestBody Customer requestCustomer){
 
         Customer updateCustomer = customerService.updateById(requestCustomer);
@@ -114,7 +88,7 @@ public class CustomerController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping(path = "/customers/{requestId}")
+    @DeleteMapping(path = "/{requestId}")
     public ResponseEntity<WebResponse<String>> deleteCustomer(@PathVariable String requestId){
 
         customerService.deleteById(requestId);

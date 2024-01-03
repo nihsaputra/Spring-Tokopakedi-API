@@ -1,6 +1,5 @@
 package com.enigma.tokopakedi.controller;
 
-import com.enigma.tokopakedi.entity.UserCredential;
 import com.enigma.tokopakedi.model.AuthRequest;
 import com.enigma.tokopakedi.model.UserResponse;
 import com.enigma.tokopakedi.model.WebResponse;
@@ -8,10 +7,8 @@ import com.enigma.tokopakedi.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 @RestController
 @RequiredArgsConstructor
